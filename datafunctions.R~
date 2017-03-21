@@ -1,0 +1,96 @@
+findondata <- function(x){
+    indrows <- which(fil.data$BandNumber==x)
+    inddata <- fil.data[indrows,]
+    plotdata <- cbind(as.character(inddata$CommonName),as.character(inddata$RouteId),as.character(inddata$YearCollected),sub("....","",inddata$JulianDay),as.character(inddata$Sex),as.character(inddata$FlightFeatherMolt),as.character(inddata$CloacalP),as.character(inddata$BroodPa),as.character(inddata$LifeS))
+return(plotdata)
+}
+
+birdsex <- function(x){
+    vv <- unique(x[,5])
+    vv[which(vv!="Male" & vv!="Female")] <- 0
+    vv1 <- vv
+    vv[which(vv1=="Male"|vv1=="Female")] <- 1
+    vv2 <- as.numeric(vv)
+    if(sum(vv2)==0)sex <- "U"
+    if(sum(vv2)==1)sex <- substr(vv1[which(vv1!=0)],1,1)
+    if(sum(vv2)==2)sex <- "T"
+    return(sex)
+}
+
+
+birdage <- function(x){
+    tt <- x[,9]
+    age <- ifelse(tt=="Hatching Year",0,1)
+    return(age)
+}
+
+
+smolt <- function(x){
+    tt <- x[,6]
+    tt[which(tt=="adventitious"|tt=="none")] <- 1
+    tt[which(tt=="symmetric")] <- 2
+    tt[which(!tt%in%c(1,2))] <- 3
+    return(as.numeric(tt))
+}
+
+bstat <- function(x){
+    bp.breed <- c("Heavy, vascularization extreme","Vascularized","Wrinkled, dry, no or little vascularization")
+    cp.breed <- c("Large (bulbous)","Medium (cylindrical)")
+    mm <- matrix(x[,7:8],ncol=2)
+    vv <- matrix(NA,dim(mm)[1],dim(mm)[2])
+    vv[which(!mm[,1]%in%cp.breed),1] <- 0
+    vv[which(mm[,1]%in%cp.breed)] <- 2
+    vv[which(!mm[,2]%in%bp.breed),2] <- 0
+    vv[which(mm[,2]%in%bp.breed)] <- 2
+    breed <- apply(vv,1,sum)
+    return(breed)
+}
+
+
+jdaygrp <- function(x){
+    grp <- seq(1,371,by=10)
+    ints <- findInterval(as.numeric(x[,2]),grp)
+    njd <- (ints-1)*10+5
+    return(njd)
+}
+
+
+linenum <- function(x){
+    mm <- x[,1:3]
+    temp <- apply(mm,1,function(x)paste(x,collapse=" "))
+    linenum <- as.numeric(as.factor(temp))
+    return(linenum)
+}
+
+linetext <- function(x){
+    mm <- x[,1:3]
+    temp <- apply(mm,1,function(x)paste(x,collapse=" "))
+    linenum <- as.numeric(as.factor(temp))
+    
+    
+    }
+
+
+fintab <- function(x){
+    tt <- x
+       
+    tab <- cbind(linenum(tt),jdaygrp(tt),smolt(tt),bstat(tt),birdage(tt),1)
+    if(nrow(tt)>1){
+    freq <- aggregate(tab[,6],by=list(tab[,1],tab[,2]),sum)[,3]
+    ftab <- aggregate(tab[,3:5],by=list(tab[,1],tab[,2]),max)
+    }else{
+        freq <- 1
+        ftab <- matrix(tab[,-6],nrow=1)
+        
+        }
+    if(nrow(ftab)>1){
+        color <- apply(ftab[,3:5],1,function(x)((sum(x[1:2])+1)*x[3])+1)
+    }else{
+        color <-((sum(ftab[,3:4])+1)*ftab[,5])+1} 
+    
+    ftab <- cbind(ftab,freq,color)
+    colnames(ftab) <- c("Year","JD","FF","Breed","AHY","Freq","Color")
+    sex <- birdsex(tt)
+    nyears <- max(ftab[,1])
+    fin <- list(Data=ftab,Sex=sex,NYears=nyears)
+    return(fin)}
