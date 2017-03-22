@@ -1,24 +1,16 @@
 
-
-spp <- "YWAR"
-site <- "WOOD"
-age="All"
-
-
-
-
 IndiCa <- function(spp,site,age="All"){
     source("datafunctions.R")
     source("plotfunctions.R")
-    load("../data/bandtable.RData")
     load("../data/filtereddata.RData")
+    load("../data/bandtable.RData")
     if(age=="All"){
         bnum <- band.table$Band.Number[which(band.table$Species.Code==spp & band.table$Locality==site)]
     }else{
         bnum <- band.table$Band.Number[which(band.table$Species.Code==spp & band.table$Locality==site & band.table$Age.Levels==age)]
     }
 
-    rawdata <- apply(cbind(as.character(bnum)),1,findondata)
+    rawdata <- apply(cbind(as.character(bnum)),1,function(x)findondata(x,usdata=fil.data))
     tormv <- which(unlist(lapply(rawdata,function(x)sum(is.na(x))))>0)
     if(length(tormv)>0){
     data <- rawdata[-tormv]
@@ -30,7 +22,6 @@ IndiCa <- function(spp,site,age="All"){
 
     liste <- lapply(data,fintab)
 
-    plotc <- matrix(c("black","slateblue2","springgreen3","dimgrey","darkorange2","firebrick3"),ncol=2)
 
     pchc <- matrix(c("25D0","25D1","1","25E7","25E8","0"),ncol=2)
 
@@ -51,7 +42,7 @@ IndiCa <- function(spp,site,age="All"){
     plotcolor <- c("white","grey95")
     linecolor <- c("black","limegreen")
 
-    filename <- paste("results/",paste(spp,site,age,sep="_"),".png",sep="")
+    filename <- paste("../results/",paste(spp,site,age,sep="_"),".svg",sep="")
     svg(height=3.13333*sum(nttt),width=11.666,file=filename,pointsize=15.0)
     split.screen(scpos,erase=T)
     for(i in 1:llis){

@@ -1,6 +1,6 @@
-findondata <- function(x){
-    indrows <- which(fil.data$BandNumber==x)
-    inddata <- fil.data[indrows,]
+findondata <- function(x,usdata=fil.data){
+    indrows <- which(usdata$BandNumber==x)
+    inddata <- usdata[indrows,]
     plotdata <- cbind(as.character(inddata$CommonName),as.character(inddata$RouteId),as.character(inddata$YearCollected),sub("....","",inddata$JulianDay),as.character(inddata$Sex),as.character(inddata$FlightFeatherMolt),as.character(inddata$CloacalP),as.character(inddata$BroodPa),as.character(inddata$LifeS))
 return(plotdata)
 }
@@ -20,16 +20,16 @@ birdsex <- function(x){
 
 birdage <- function(x){
     tt <- x[,9]
-    age <- ifelse(tt=="Hatching Year",2,0)
+    age <- ifelse(tt=="Hatching Year",2,1)
     return(age)
 }
 
 
 smolt <- function(x){
     tt <- x[,6]
-    tt[which(tt=="adventitious"|tt=="none")] <- 1
-    tt[which(tt=="symmetric")] <- 2
-    tt[which(!tt%in%c(0,1))] <- 3
+    tt[which(tt=="adventitious"|tt=="none")] <-2
+    tt[which(tt=="symmetric")] <- 3
+    tt[which(!tt%in%c(2,3))] <- 1
     return(as.numeric(tt))
 }
 
@@ -39,12 +39,12 @@ bstat <- function(x){
     cp.breed <- c("Large (bulbous)","Medium (cylindrical)")
     mm <- matrix(x[,7:8],ncol=2)
     vv <- matrix(NA,dim(mm)[1],dim(mm)[2])
-    vv[which(!mm[,1]%in%cp.breed),1] <- 0
-    vv[which(mm[,1]%in%cp.breed)] <- 2
-    vv[which(!mm[,2]%in%bp.breed),2] <- 0
-    vv[which(mm[,1]==bp.wrink)] <- 1
-    vv[which(mm[,2]%in%bp.breed)] <- 2
-    breed <- apply(vv,1,sum)
+    vv[which(!mm[,1]%in%cp.breed),1] <- 1
+    vv[which(mm[,1]%in%cp.breed),1] <- 3
+    vv[which(!mm[,2]%in%bp.breed),2] <- 1
+    vv[which(mm[,2]==bp.wrink),2] <- 2
+    vv[which(mm[,2]%in%bp.breed),2] <- 3
+    breed <- apply(vv,1,max)
     return(breed)
 }
 
@@ -93,7 +93,7 @@ fintab <- function(x){
     }
     txt <- linetext(tt,tab)
     
-    ftab <- cbind(ftab,freq,color)
+    ftab <- cbind(ftab,freq)
     colnames(ftab) <- c("Line","JD","FF","Breed","AHY","Freq")
     sex <- birdsex(tt)
     nyears <- max(ftab[,1])

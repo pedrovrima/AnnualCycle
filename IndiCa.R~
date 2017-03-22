@@ -1,12 +1,3 @@
-
-
-spp <- "YWAR"
-site <- "WOOD"
-age="All"
-
-
-
-
 IndiCa <- function(spp,site,age="All"){
     source("datafunctions.R")
     source("plotfunctions.R")
@@ -51,7 +42,7 @@ IndiCa <- function(spp,site,age="All"){
     plotcolor <- c("white","grey95")
     linecolor <- c("black","limegreen")
 
-    filename <- paste("results/",paste(spp,site,age,sep="_"),".png",sep="")
+    filename <- paste("../results/",paste(spp,site,age,sep="_"),".svg",sep="")
     svg(height=3.13333*sum(nttt),width=11.666,file=filename,pointsize=15.0)
     split.screen(scpos,erase=T)
     for(i in 1:llis){
