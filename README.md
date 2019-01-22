@@ -1,4 +1,4 @@
-IndiCa - Individual Capture Histories
+# IndiCa - Individual Capture Histories
 
 Este código cria uma visualização original baseada em dados de marcação e recaptura de aves presentes na base de dados LaMNA (Landbirds Monitoring Network of the Americas), com mais de 400.000 entradas de dados. A base de dados é mantida pelo Serviço Florestal norte-americano e serve de base para diversos artigos publicados nos últimos 30 anos. 
 
@@ -8,5 +8,9 @@ Todo o código foi criado utilizando "base R", antes de eu aprender a usar o Tid
 
 Abaixo, um pequeno recorte de parte da visualização e a legenda.
 
+## Legenda
 
 ![Legenda IndiCa](https://i.imgur.com/zOdn2zO.png)
+
+## Exemplo
+![Exemplo IndiCa](https://i.imgur.com/McULEX3.png)
