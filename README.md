@@ -9,3 +9,4 @@ Todo o código foi criado utilizando "base R", antes de eu aprender a usar o Tid
 Abaixo, um pequeno recorte de parte da visualização e a legenda.
 
 
+![Legenda IndiCa](https://imgur.com/BGtfEVB)
